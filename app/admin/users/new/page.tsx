@@ -3,26 +3,25 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { NewScoreForm } from "@/components/new-score-form"
-import { getUsers, getRoles } from "@/app/actions"
+import { UserForm } from "@/components/user-form"
+import { getRoles } from "@/app/actions"
 
-export default async function NewScorePage() {
-  const users = await getUsers()
+export default async function NewUserPage() {
   const roles = await getRoles()
 
   return (
     <div className="space-y-6">
-      <DashboardHeader heading="Record New Score" text="Create a new performance evaluation record.">
+      <DashboardHeader heading="Add New User" text="Create a new user account.">
         <Button variant="outline" size="sm" asChild>
-          <Link href="/scores" className="flex items-center gap-1">
+          <Link href="/admin/users" className="flex items-center gap-1">
             <ArrowLeft className="h-4 w-4" />
-            Back to Scores
+            Back to Users
           </Link>
         </Button>
       </DashboardHeader>
 
       <Card>
-        <NewScoreForm users={users} roles={roles} />
+        <UserForm roles={roles} />
       </Card>
     </div>
   )

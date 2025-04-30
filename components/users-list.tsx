@@ -180,15 +180,16 @@ export function UsersList({ users, roles }: UsersListProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                      {/* <Button variant="ghost" size="icon" disabled className="h-8 w-8" asChild>
                         <Link href={`/users/${user.id}`}>
                           <Edit className="h-4 w-4" />
                         </Link>
-                      </Button>
+                      </Button> */}
                       <Button 
                         variant="ghost" 
                         size="icon" 
                         className="h-8 w-8"
+                        disabled
                         onClick={() => handleDelete(user.id)}
                       >
                         <Trash className="h-4 w-4" />

@@ -17,7 +17,7 @@ export default async function ScoresPage() {
     <div className="space-y-6">
       <DashboardHeader heading="Performance Scores" text="View and manage daily performance evaluations.">
         <Button asChild className="bg-black hover:bg-black/90 text-white">
-          <Link href="/scores/new">
+          <Link href="/admin/scores/new">
             <Plus className="mr-2 h-4 w-4" />
             New Score
           </Link>

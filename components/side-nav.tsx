@@ -15,22 +15,22 @@ export function SideNav({ className, ...props }: SideNavProps) {
   const items = [
     {
       title: "Dashboard",
-      href: "/dashboard",
+      href: "/admin/dashboard",
       icon: Home,
     },
     {
       title: "Scores",
-      href: "/scores",
+      href: "/admin/scores",
       icon: BarChart3,
     },
     {
       title: "Users",
-      href: "/users",
+      href: "/admin/users",
       icon: Users,
     },
     {
       title: "Master Data",
-      href: "/master-data",
+      href: "/admin/master-data",
       icon: ClipboardList,
     },
     // {

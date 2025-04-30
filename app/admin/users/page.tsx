@@ -13,12 +13,12 @@ export default async function UsersPage() {
   return (
     <div className="space-y-6">
       <DashboardHeader heading="Users" text="Manage users and their roles.">
-        <Button className="bg-black hover:bg-black/90 text-white" asChild>
-          <Link href="/users/new">
+        {/* <Button className="bg-black hover:bg-black/90 text-white" asChild>
+          <Link href="/admin/users/new">
             <Plus className="mr-2 h-4 w-4" />
             Add User
           </Link>
-        </Button>
+        </Button> */}
       </DashboardHeader>
 
       <Card>

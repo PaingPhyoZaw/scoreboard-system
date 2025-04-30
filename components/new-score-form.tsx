@@ -186,7 +186,7 @@ export function NewScoreForm({ users, roles }: NewScoreFormProps) {
           title: "Score Recorded",
           description: "The performance score has been successfully recorded.",
         })
-        router.push("/scores")
+        router.push("/admin/scores")
       } else {
         toast({
           title: "Error",
@@ -361,7 +361,7 @@ export function NewScoreForm({ users, roles }: NewScoreFormProps) {
       </CardContent>
       <CardFooter className="flex justify-between p-6 pt-0">
         <Button variant="outline" asChild>
-          <Link href="/scores">Cancel</Link>
+          <Link href="/admin/scores">Cancel</Link>
         </Button>
         <Button
           type="submit"

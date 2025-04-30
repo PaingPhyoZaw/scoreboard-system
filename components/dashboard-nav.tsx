@@ -17,27 +17,27 @@ export function DashboardNav({ isCollapsed, className, ...props }: NavProps) {
   const items = [
     {
       title: "Dashboard",
-      href: "/",
+      href: "/admin/dashboard",
       icon: Home,
     },
     {
       title: "Scores",
-      href: "/scores",
+      href: "/admin/scores",
       icon: BarChart3,
     },
     {
       title: "Users",
-      href: "/users",
+      href: "/admin/users",
       icon: Users,
     },
     {
       title: "Master Data",
-      href: "/master-data",
+      href: "/admin/master-data",
       icon: ClipboardList,
     },
     {
       title: "Settings",
-      href: "/settings",
+      href: "/admin/settings",
       icon: Settings,
     },
   ]

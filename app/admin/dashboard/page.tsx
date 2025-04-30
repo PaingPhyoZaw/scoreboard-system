@@ -57,7 +57,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <DashboardHeader heading="Dashboard" text="Monitor daily performance scores and progress against targets.">
         <Button asChild className="bg-black hover:bg-black/90 text-white">
-          <Link href="/scores/new">Record New Score</Link>
+          <Link href="/admin/scores/new">Record New Score</Link>
         </Button>
       </DashboardHeader>
 
