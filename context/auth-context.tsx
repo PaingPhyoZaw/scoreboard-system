@@ -11,7 +11,7 @@ type AuthContextType = {
   user: User | null
   session: Session | null
   isLoading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: any }>
+  signIn: (email: string, password: string) => Promise<{ user: User | null; error: any }>
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any; data: any }>
   signOut: () => Promise<void>
 }
@@ -70,14 +70,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
-      return { error }
+      
+      if (error) {
+        return { user: null, error }
+      }
+
+      // Get role from user metadata
+      const userWithRole = {
+        ...data.user,
+        role: data.user?.user_metadata?.role || 'engineer'
+      }
+
+      return { user: userWithRole, error: null }
     } catch (err) {
       console.error("Error signing in:", err)
-      return { error: { message: "An unexpected error occurred during sign in." } }
+      return { user: null, error: { message: "An unexpected error occurred during sign in." } }
     }
   }
 

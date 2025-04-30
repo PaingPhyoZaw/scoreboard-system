@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { useAuth } from "@/context/auth-context"
+import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -39,19 +39,34 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const { error } = await signIn(email, password)
+      console.log('Attempting login with:', email)
+      const { user, error } = await signIn(email, password)
+      console.log('Sign in result:', { user, error })
 
       if (error) {
-        setError(error.message)
+        console.error('Login error:', error)
+        setError(error.message || 'Failed to sign in')
         setIsLoading(false)
         return
       }
 
-      router.push("/")
+      if (!user) {
+        console.error('No user data returned')
+        setError('Failed to get user data')
+        setIsLoading(false)
+        return
+      }
+
+      console.log('Login successful, redirecting based on role:', user.role_id)
+      // Only redirect after successful login
+      if (user.role_id === 1) {
+        await router.push("/admin/dashboard")
+      } else {
+        await router.push("/scores")
+      }
     } catch (err) {
+      console.error('Unexpected error during login:', err)
       setError("An unexpected error occurred. Please try again.")
-      console.error(err)
-    } finally {
       setIsLoading(false)
     }
   }

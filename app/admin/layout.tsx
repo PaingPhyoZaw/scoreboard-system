@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useAuth } from "@/context/auth-context"
+import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { MainNav } from "@/components/main-nav"
@@ -20,13 +20,13 @@ export default function DashboardLayout({
   const [authError, setAuthError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      try {
-        router.push("/login")
-      } catch (error) {
-        console.error("Navigation error:", error)
-        setAuthError("Authentication required. Please refresh and try again.")
-      }
+    if (isLoading) return; // Wait for hydration
+    
+    if (!user) {
+      router.replace("/login")
+    } else if (user.role_id !== 1) {
+      router.replace("/scores")
+      setAuthError("Only administrators can access this area.")
     }
   }, [user, isLoading, router])
 
