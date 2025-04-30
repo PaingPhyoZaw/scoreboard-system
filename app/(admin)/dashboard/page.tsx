@@ -1,3 +1,6 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { Button } from "@/components/ui/button"
@@ -5,24 +8,48 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Overview } from "@/components/overview"
 import { RecentScores } from "@/components/recent-scores"
 import { RolePerformance } from "@/components/role-performance"
-import { getDashboardStats } from "@/app/actions"
+import { DashboardService, DashboardStats } from "@/lib/services/dashboard"
+import { Loading } from "@/components/ui/loading"
 
-export default async function DashboardPage() {
-  const stats = await getDashboardStats()
+export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const dashboardService = DashboardService.getInstance()
+        const data = await dashboardService.getDashboardStats()
+        setStats(data)
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStats()
+  }, [])
+
+  if (loading) {
+    return <Loading text="Loading dashboard..." />
+  }
+
+  if (!stats) {
+    return null
+  }
 
   // Format data for charts
-  const overviewData =
-    stats.monthlyScores?.map((score) => ({
-      name: new Date(score.score_date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      actual: score.total_score,
-      target: score.target_score,
-    })) || []
+  const overviewData = stats.monthlyScores.map((score) => ({
+    name: new Date(score.score_date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    actual: score.total_score,
+    target: score.target_score,
+  }))
 
   // Calculate target completion
-  const targetCompletion =
-    stats.averageScore > 0 && stats.topPerformer?.target_score > 0
-      ? Math.round((stats.averageScore / stats.topPerformer.target_score) * 100)
-      : 0
+  const targetCompletion = stats.topPerformer
+    ? Math.round((stats.averageScore / stats.topPerformer.target_score) * 100)
+    : 0
 
   const remainingToTarget = 100 - targetCompletion
 
@@ -35,6 +62,17 @@ export default async function DashboardPage() {
       </DashboardHeader>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Most improved</p>
+              <h2 className="text-3xl font-bold">{stats.topPerformer?.user.full_name || "No data"}</h2>
+              <p className="text-xs text-muted-foreground">
+                {stats.topPerformer?.user.role.name || "No role"}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
         <Card>
           <CardContent className="p-6">
             <div className="space-y-1">
@@ -56,26 +94,11 @@ export default async function DashboardPage() {
         <Card>
           <CardContent className="p-6">
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">Target Completion</p>
-              <h2 className="text-3xl font-bold">{targetCompletion}%</h2>
-              <p className="text-xs text-muted-foreground">{remainingToTarget}% remaining to reach target</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">Top Performer</p>
-              <h2 className="text-3xl font-bold">
-                {stats.topPerformer?.users?.full_name
-                  ? stats.topPerformer.users.full_name.split(" ")[0] +
-                    " " +
-                    stats.topPerformer.users.full_name.split(" ")[1]?.charAt(0) +
-                    "."
-                  : "N/A"}
-              </h2>
+              <p className="text-sm text-muted-foreground">Top performer this month</p>
+              <h2 className="text-3xl font-bold">{stats.topPerformer?.user.full_name || "No data"}</h2>
               <p className="text-xs text-muted-foreground">
-                {stats.topPerformer?.users?.roles?.name} - {stats.topPerformer?.total_score}% score
+                {stats.topPerformer?.user.role.name || "No role"} -{" "}
+                {stats.topPerformer?.total_score ? `${stats.topPerformer.total_score.toFixed(1)}%` : "0%"}
               </p>
             </div>
           </CardContent>
@@ -88,7 +111,7 @@ export default async function DashboardPage() {
             <h3 className="font-semibold">Recent Scores</h3>
             <p className="text-sm text-muted-foreground">Latest performance evaluations across all roles</p>
           </div>
-          <RecentScores scores={stats.recentScores || []} />
+          <RecentScores scores={stats.monthlyScores.slice(-5)} />
         </CardContent>
       </Card>
     </div>

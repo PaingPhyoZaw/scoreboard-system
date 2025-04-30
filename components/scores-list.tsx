@@ -91,7 +91,12 @@ export function ScoresList({ users, roles }: ScoresListProps) {
     }
   }
 
-  const filteredScores = scores.filter((score) => {
+  // Sort scores by date in descending order (latest first)
+  const sortedScores = [...scores].sort((a, b) => 
+    new Date(b.score_date).getTime() - new Date(a.score_date).getTime()
+  )
+
+  const filteredScores = sortedScores.filter((score) => {
     const matchesSearch = filter.search === "" || (score.user?.full_name?.toLowerCase() || "").includes(filter.search.toLowerCase())
     const matchesRole = filter.role === "all" || score.user?.role_id?.toString() === filter.role
     const matchesDate = !filter.startDate || !filter.endDate || 
