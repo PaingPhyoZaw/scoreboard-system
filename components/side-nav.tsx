@@ -33,11 +33,11 @@ export function SideNav({ className, ...props }: SideNavProps) {
       href: "/master-data",
       icon: ClipboardList,
     },
-    {
-      title: "Settings",
-      href: "/settings",
-      icon: Settings,
-    },
+    // {
+    //   title: "Settings",
+    //   href: "/settings",
+    //   icon: Settings,
+    // },
   ]
 
   return (

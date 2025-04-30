@@ -82,31 +82,6 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-2">
-              <h3 className="font-semibold">Monthly Overview</h3>
-              <p className="text-sm text-muted-foreground">Score progression compared to monthly targets</p>
-              <div className="h-[300px] mt-4">
-                <Overview data={overviewData} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-2">
-              <h3 className="font-semibold">Performance by Role</h3>
-              <p className="text-sm text-muted-foreground">Average scores by role category</p>
-              <div className="h-[300px] mt-4">
-                <RolePerformance data={stats.rolePerformanceData || []} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       <Card>
         <CardContent className="p-6">
           <div className="space-y-2 mb-4">

@@ -58,7 +58,7 @@ export function UsersList({ users, roles }: UsersListProps) {
 
   return (
     <div className="p-4 md:p-6 space-y-4">
-      <div className="grid grid-col-2 space-y-4">
+      <div className="grid grid-cols-2 gap-4">
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -69,7 +69,7 @@ export function UsersList({ users, roles }: UsersListProps) {
             onChange={(e) => setFilter({ ...filter, search: e.target.value })}
           />
         </div>
-        <div>
+        <div className="relative w-full">
           <Select value={filter.role} onValueChange={(value) => setFilter({ ...filter, role: value })}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Filter by role" />

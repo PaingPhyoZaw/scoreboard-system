@@ -2,20 +2,20 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Eye, Search } from "lucide-react"
+import { Eye } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Link from "next/link"
 import { format } from "date-fns"
 import { ScoreDetails } from "@/components/score-details"
 import { ScoreService } from "@/lib/services/scores"
 import { Role, ScoreWithRelations, User } from "@/types/supabase"
 import { deleteScore } from "@/app/actions/scores"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/use-toast"
+import { Loading } from "@/components/ui/loading"
 
 interface ScoresListProps {
   users: User[]
@@ -37,12 +37,7 @@ const getAvatarText = (name: string | null | undefined): string => {
 }
 
 export function ScoresList({ users, roles }: ScoresListProps) {
-  const [filter, setFilter] = useState<{
-    search: string
-    role: string
-    startDate: string
-    endDate: string
-  }>({
+  const [filter, setFilter] = useState({
     search: "",
     role: "all",
     startDate: "",
@@ -56,22 +51,25 @@ export function ScoresList({ users, roles }: ScoresListProps) {
   const itemsPerPage = 10
 
   useEffect(() => {
-    fetchScores()
-  }, [filter])
-
-  const fetchScores = async () => {
-    try {
-      setLoading(true)
-      const scoreService = ScoreService.getInstance()
-      const data = await scoreService.getScores(filter)
-      setScores(data)
-    } catch (error) {
-      console.error('Error fetching scores:', error)
-      toast.error('Failed to load scores')
-    } finally {
-      setLoading(false)
+    const fetchScores = async () => {
+      try {
+        setLoading(true)
+        const scoreService = ScoreService.getInstance()
+        const data = await scoreService.getScores()
+        setScores(data)
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message || "Failed to fetch scores"
+        })
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+    
+    fetchScores()
+  }, [])
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this score?')) return
@@ -79,28 +77,43 @@ export function ScoresList({ users, roles }: ScoresListProps) {
     const result = await deleteScore(id)
     
     if (result.success) {
-      toast.success('Score deleted successfully')
-      fetchScores()
+      toast({
+        title: "Success",
+        description: "Score deleted successfully"
+      })
+      setScores(scores.filter(score => score.id !== id))
     } else {
-      toast.error(result.error || 'Failed to delete score')
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: result.error || "Failed to delete score"
+      })
     }
   }
 
-  if (loading) {
-    return <div className="p-4">Loading scores...</div>
-  }
+  const filteredScores = scores.filter((score) => {
+    const matchesSearch = filter.search === "" || (score.user?.full_name?.toLowerCase() || "").includes(filter.search.toLowerCase())
+    const matchesRole = filter.role === "all" || score.user?.role_id?.toString() === filter.role
+    const matchesDate = !filter.startDate || !filter.endDate || 
+      (score.score_date && score.score_date >= filter.startDate && score.score_date <= filter.endDate)
+    
+    return matchesSearch && matchesRole && matchesDate
+  })
 
-  const uniqueDates = Array.from(new Set(scores.map((s) => s.score_date)))
+  if (loading) {
+    return <Loading text="Loading scores..." />
+  }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
         <div className="flex-1">
           <Input
+            type="search"
             placeholder="Search by name..."
+            className="pl-9 w-full"
             value={filter.search}
-            onChange={(e) => setFilter({ ...filter, search: e.target.value })}
-            className="max-w-sm"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilter({ ...filter, search: e.target.value })}
           />
         </div>
         <Select
@@ -161,14 +174,14 @@ export function ScoresList({ users, roles }: ScoresListProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {scores.length === 0 ? (
+            {filteredScores.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center">
                   No scores found.
                 </TableCell>
               </TableRow>
             ) : (
-              scores
+              filteredScores
                 .slice((page - 1) * itemsPerPage, page * itemsPerPage)
                 .map((score, index) => (
                   <TableRow key={score.id}>
@@ -210,7 +223,9 @@ export function ScoresList({ users, roles }: ScoresListProps) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {Array.isArray(score.user?.roles) ? score.user?.roles[0]?.name : score.user?.roles?.name || 'Unknown Role'}
+                      <Badge variant="outline" className="bg-muted/50">
+                        {Array.isArray(score.user?.roles) ? score.user?.roles[0]?.name : score.user?.roles?.name || 'Unknown Role'}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="space-y-2">

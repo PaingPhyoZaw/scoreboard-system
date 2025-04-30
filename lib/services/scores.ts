@@ -46,14 +46,6 @@ export class ScoreService {
       `)
       .order('score_date', { ascending: false })
 
-    if (filters?.role && filters.role !== 'all') {
-      query = query.eq('user.role_id', filters.role)
-    }
-
-    if (filters?.search) {
-      query = query.ilike('user.full_name', `%${filters.search}%`)
-    }
-
     if (filters?.startDate && filters?.endDate) {
       query = query.gte('score_date', filters.startDate).lte('score_date', filters.endDate)
     }

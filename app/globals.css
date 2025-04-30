@@ -10,6 +10,40 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  .loading-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 100%;
+  }
+
+  .loading-dots .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: hsl(var(--primary));
+    animation: bounce 0.8s infinite;
+  }
+
+  .loading-dots .dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .loading-dots .dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-15px);
+      background-color: hsl(var(--primary-foreground));
+    }
+  }
 }
 
 @layer base {
@@ -95,68 +129,76 @@ body {
     overflow-x: hidden;
   }
 
-  .gradient-circle {
-    content: '';
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: -1;
-    pointer-events: none;
-  }
-
-  /* Center circle */
+  /* Main large gradient circle */
   body::before {
     content: '';
     position: fixed;
-    width: 35%;
-    height: 35%;
+    width: 45%;
+    height: 45%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(237, 235, 255, 0.3) 0%, rgba(214, 211, 255, 0.3) 100%);
-    filter: blur(80px);
+    background: linear-gradient(135deg, 
+      rgba(147, 112, 219, 0.08) 0%,
+      rgba(183, 132, 255, 0.12) 50%,
+      rgba(123, 97, 255, 0.1) 100%
+    );
+    filter: blur(100px);
     z-index: -1;
   }
 
-  /* Top left circle */
+  /* Top left accent circle */
   body::after {
     content: '';
     position: fixed;
-    width: 25%;
-    height: 25%;
-    top: 10%;
-    left: 15%;
+    width: 35%;
+    height: 35%;
+    top: -10%;
+    left: -5%;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(230, 228, 255, 0.25) 0%, rgba(180, 175, 255, 0.25) 100%);
+    background: linear-gradient(135deg,
+      rgba(167, 139, 250, 0.1) 0%,
+      rgba(156, 126, 255, 0.14) 50%,
+      rgba(138, 103, 255, 0.12) 100%
+    );
     filter: blur(70px);
     z-index: -1;
   }
 
-  /* Create additional circles using pseudo-elements on other elements */
+  /* Bottom right glow */
   main::before {
     content: '';
     position: fixed;
-    width: 20%;
-    height: 20%;
-    bottom: 15%;
-    right: 10%;
+    width: 40%;
+    height: 40%;
+    bottom: -15%;
+    right: -10%;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(245, 240, 255, 0.25) 0%, rgba(220, 215, 255, 0.25) 100%);
-    filter: blur(60px);
+    background: linear-gradient(135deg,
+      rgba(191, 175, 255, 0.1) 0%,
+      rgba(167, 142, 255, 0.18) 50%,
+      rgba(144, 114, 255, 0.15) 100%
+    );
+    filter: blur(165px);
     z-index: -1;
   }
 
+  /* Top right accent */
   main::after {
     content: '';
     position: fixed;
-    width: 15%;
-    height: 15%;
-    top: 20%;
-    right: 25%;
+    width: 25%;
+    height: 25%;
+    top: 15%;
+    right: 10%;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(235, 230, 255, 0.2) 0%, rgba(200, 195, 255, 0.2) 100%);
-    filter: blur(50px);
+    background: linear-gradient(135deg,
+      rgba(180, 162, 255, 0.12) 0%,
+      rgba(156, 132, 255, 0.18) 50%,
+      rgba(132, 104, 255, 0.15) 100%
+    );
+    filter: blur(70px);
     z-index: -1;
   }
 }
