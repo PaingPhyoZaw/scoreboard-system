@@ -4,20 +4,15 @@ const nextConfig = {
     ignoreBuildErrors: true
   },
   experimental: {
-    serverActions: {
-      allowedOrigins: ['localhost:3000']
-    }
+    serverActions: true
   },
-  serverExternalPackages: ['@prisma/client', '@supabase/auth-helpers-nextjs'],
   images: {
     unoptimized: true,
   },
-  output: 'standalone',
   webpack: (config) => {
     config.experiments = {
       ...config.experiments,
-      topLevelAwait: true,
-      layers: true
+      topLevelAwait: true
     }
     return config
   }
