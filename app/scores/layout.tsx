@@ -40,11 +40,11 @@ export default function ScoresLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-background">
+      {/* <header className="border-b bg-background">
         <div className="container h-16 flex items-center">
           <div className="font-semibold">ScoreBoard</div>
         </div>
-      </header>
+      </header> */}
       {children}
     </div>
   )
