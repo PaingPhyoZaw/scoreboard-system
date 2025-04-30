@@ -94,7 +94,7 @@ export default function LoginPage() {
         <div className="mb-8 flex justify-center">
           <div className="flex items-center space-x-2">
             <ClipboardCheck className="h-8 w-8" />
-            <span className="text-2xl font-bold">ScoreBoard Admin</span>
+            <span className="text-2xl font-bold">ScoreBoard</span>
           </div>
         </div>
 
@@ -135,9 +135,9 @@ export default function LoginPage() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="password">Password</Label>
-                      <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-primary">
+                      {/* <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-primary">
                         Forgot password?
-                      </Link>
+                      </Link> */}
                     </div>
                     <Input
                       id="password"
