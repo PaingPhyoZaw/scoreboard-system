@@ -1,5 +1,5 @@
 import { getSupabaseServerClient } from "@/lib/supabase"
-import { Score, ScoreCreateInput, ScoreWithRelations } from "@/types/database"
+import { Score, ScoreCreateInput, ScoreWithRelations } from "@/types/supabase"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 export class ScoreService {

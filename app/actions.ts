@@ -59,11 +59,11 @@ export async function getDashboardStats() {
     .not("role_id", "is", null)
 
   // Process role performance data
-  const roleScores = {}
+  const roleScores: Record<string, { totalScore: number; count: number; targetScore: number }> = {}
   if (rolePerformance) {
     rolePerformance.forEach((user) => {
       if (user.roles && user.scores && user.scores.length > 0) {
-        const roleName = user.roles.name
+        const roleName = user.roles[0].name
         if (!roleScores[roleName]) {
           roleScores[roleName] = {
             totalScore: 0,
@@ -219,7 +219,7 @@ export async function createScore(formData: any) {
   }
 
   // Then create the score details
-  const scoreDetails = formData.fields.map((field) => ({
+  const scoreDetails = formData.fields.map((field: any) => ({
     score_id: score.id,
     field_id: field.id,
     field_name: field.name,
