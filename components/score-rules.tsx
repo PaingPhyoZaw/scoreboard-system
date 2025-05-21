@@ -10,7 +10,7 @@ import { EvaluationField, Role } from "@/types/supabase"
 import { EvaluationFieldService } from "@/lib/services/evaluation-fields"
 import { deleteEvaluationField } from "@/app/actions/evaluation-fields"
 import { toast } from "sonner"
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog"
 
 interface ScoreRulesProps {
   roles: Role[]
@@ -88,6 +88,7 @@ export function ScoreRules({ roles }: ScoreRulesProps) {
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px]">
+          <DialogTitle >{selectedField ? "Edit Evaluation Field" : "New Evaluation Field"}</DialogTitle>
             <EvaluationFieldForm
               roles={roles}
               field={selectedField}

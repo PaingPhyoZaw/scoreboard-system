@@ -40,7 +40,7 @@ export function ScoreDetails({ score, open, onClose }: ScoreDetailsProps) {
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <Avatar>
-                <AvatarFallback>{getAvatarText(score.user?.full_name)}</AvatarFallback>
+                <AvatarFallback>{getAvatarText(score.user?.full_name?.split(' ').map(word => word.charAt(0).toUpperCase()).join(''))}</AvatarFallback>
               </Avatar>
               <div>
                 <div className="font-medium">{score.user?.full_name || 'Unknown User'}</div>

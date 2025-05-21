@@ -247,14 +247,14 @@ export function NewScoreForm({ users, roles }: NewScoreFormProps) {
           </div>
         </div>
 
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label htmlFor="date">Evaluation Date</Label>
           <Input id="date" type="date" required value={scoreDate} onChange={(e) => setScoreDate(e.target.value)} />
-        </div>
+        </div> */}
 
         {formFields.length > 0 && (
           <div className="space-y-6">
-            <h3 className="font-medium text-lg">Performance Criteria</h3>
+            {/* <h3 className="font-medium text-lg">Performance Criteria</h3> */}
 
             {formFields.map((field) => (
               <div key={field.id} className="space-y-3 pb-4 border-b border-border/50 last:border-0">

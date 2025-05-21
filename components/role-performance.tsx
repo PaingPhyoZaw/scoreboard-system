@@ -3,8 +3,23 @@
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
-export function RolePerformance() {
-  const data = [
+interface RolePerformanceProps {
+  data: {
+    role: string
+    average_score: number
+    total_scores: number
+  }[]
+}
+
+export function RolePerformance({ data }: RolePerformanceProps) {
+  const chartData = data.map(item => ({
+    name: item.role,
+    score: item.average_score,
+    target: 85, // Default target score, you might want to make this configurable
+    total: item.total_scores
+  }))
+
+  const defaultData = [
     {
       name: "Engineer",
       score: 85,
@@ -42,7 +57,7 @@ export function RolePerformance() {
       className="h-[300px]"
     >
       <BarChart
-        data={data}
+        data={chartData}
         margin={{
           top: 5,
           right: 10,

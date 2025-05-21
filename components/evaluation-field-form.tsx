@@ -61,11 +61,6 @@ export function EvaluationFieldForm({ field, roles, onSuccess }: EvaluationField
 
   return (
     <div className="space-y-6 py-2 px-1">
-      <div className="space-y-1">
-        <h2 className="text-2xl font-semibold tracking-tight">
-          {field ? "Edit Evaluation Field" : "New Evaluation Field"}
-        </h2>
-      </div>
       <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="name">Field Name</Label>
@@ -76,7 +71,6 @@ export function EvaluationFieldForm({ field, roles, onSuccess }: EvaluationField
               required
             />
           </div>
-
 
           <div className="space-y-2">
             <Label htmlFor="type">Field Type</Label>

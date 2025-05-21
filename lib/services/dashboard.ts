@@ -24,6 +24,19 @@ interface TopPerformer {
   }
 }
 
+interface EngineerStats {
+  id: string
+  name: string
+  role: string
+  monthToDateScore: number
+  targetScore: number
+  scoreBreakdown: {
+    category: string
+    score: number
+    maxScore: number
+  }[]
+}
+
 export interface DashboardStats {
   totalUsers: number
   averageScore: number
@@ -53,6 +66,7 @@ export interface DashboardStats {
     average_score: number
     total_scores: number
   }[]
+  engineerStats: EngineerStats[]
 }
 
 export class DashboardService {
@@ -94,6 +108,10 @@ export class DashboardService {
       .order("total_score", { ascending: false })
       .limit(1) as { data: TopPerformer[] | null }
 
+    // Get all engineers' month-to-date stats
+    const { data: engineerStats } = await this.supabase
+      .rpc('get_all_engineers_stats') as { data: EngineerStats[] }
+
     // Get monthly scores
     const { data: monthlyScores } = await this.supabase
       .from('scores')
@@ -114,49 +132,30 @@ export class DashboardService {
       .order('score_date', { ascending: true })
       .limit(10) as { data: ScoreWithUser[] | null }
 
-    // Get performance by role
-    const { data: rolePerformance } = await this.supabase
-      .from("roles")
-      .select(`
-        name,
-        users!users_role_id_fkey (
-          scores (
-            total_score
-          )
-        )
-      `)
-
-    // Process role performance data
-    const rolePerformanceData = rolePerformance?.map(role => {
-      const scores = role.users?.flatMap(user => user.scores || []) || []
-      const total_scores = scores.length
-      const average_score = total_scores > 0
-        ? scores.reduce((sum, score) => sum + score.total_score, 0) / total_scores
-        : 0
-
-      return {
-        role: role.name,
-        average_score,
-        total_scores
+    // Transform monthly scores data
+    const transformedMonthlyScores = (monthlyScores || []).map(score => ({
+      score_date: score.score_date,
+      total_score: score.total_score,
+      target_score: score.target_score,
+      user: {
+        name: score.user.full_name,
+        email: score.user.email,
+        role: score.user.role.name
       }
-    }) || []
+    }))
+
+    // Get role performance data
+    const { data: rolePerformanceData } = await this.supabase
+      .rpc('get_role_performance')
 
     return {
       totalUsers: totalUsers || 0,
-      totalScores: scoreStats?.[0]?.total_scores || 0,
-      averageScore: scoreStats?.[0]?.average_score || 0,
-      topPerformer: topPerformer?.[0] ?? null,
-      monthlyScores: (monthlyScores || []).map(score => ({
-        score_date: score.score_date,
-        total_score: score.total_score,
-        target_score: score.target_score,
-        user: {
-          name: score.user.full_name,
-          email: score.user.email,
-          role: score.user.role.name
-        }
-      })),
-      rolePerformanceData: rolePerformanceData || []
+      totalScores: scoreStats?.total_scores || 0,
+      averageScore: scoreStats?.average_score || 0,
+      topPerformer: topPerformer?.[0] || null,
+      monthlyScores: transformedMonthlyScores,
+      rolePerformanceData: rolePerformanceData || [],
+      engineerStats: engineerStats || []
     }
   }
 }
