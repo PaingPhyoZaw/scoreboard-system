@@ -108,10 +108,6 @@ export class DashboardService {
       .order("total_score", { ascending: false })
       .limit(1) as { data: TopPerformer[] | null }
 
-    // Get all engineers' month-to-date stats
-    const { data: engineerStats } = await this.supabase
-      .rpc('get_all_engineers_stats') as { data: EngineerStats[] }
-
     // Get monthly scores
     const { data: monthlyScores } = await this.supabase
       .from('scores')
@@ -147,6 +143,10 @@ export class DashboardService {
     // Get role performance data
     const { data: rolePerformanceData } = await this.supabase
       .rpc('get_role_performance')
+
+    // Get engineer stats
+    const { data: engineerStats } = await this.supabase
+      .rpc('get_all_engineers_stats')
 
     return {
       totalUsers: totalUsers || 0,
