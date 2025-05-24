@@ -24,6 +24,14 @@ interface TopPerformer {
   }
 }
 
+interface EngineerStats {
+  id: string
+  name: string
+  role: string
+  totalScore: number
+  maxPossibleScore: number
+}
+
 export interface DashboardStats {
   totalUsers: number
   averageScore: number
@@ -53,6 +61,7 @@ export interface DashboardStats {
     average_score: number
     total_scores: number
   }[]
+  engineerStats: EngineerStats[]
 }
 
 export class DashboardService {
@@ -114,49 +123,34 @@ export class DashboardService {
       .order('score_date', { ascending: true })
       .limit(10) as { data: ScoreWithUser[] | null }
 
-    // Get performance by role
-    const { data: rolePerformance } = await this.supabase
-      .from("roles")
-      .select(`
-        name,
-        users!users_role_id_fkey (
-          scores (
-            total_score
-          )
-        )
-      `)
-
-    // Process role performance data
-    const rolePerformanceData = rolePerformance?.map(role => {
-      const scores = role.users?.flatMap(user => user.scores || []) || []
-      const total_scores = scores.length
-      const average_score = total_scores > 0
-        ? scores.reduce((sum, score) => sum + score.total_score, 0) / total_scores
-        : 0
-
-      return {
-        role: role.name,
-        average_score,
-        total_scores
+    // Transform monthly scores data
+    const transformedMonthlyScores = (monthlyScores || []).map(score => ({
+      score_date: score.score_date,
+      total_score: score.total_score,
+      target_score: score.target_score,
+      user: {
+        name: score.user.full_name,
+        email: score.user.email,
+        role: score.user.role.name
       }
-    }) || []
+    }))
 
+    // Get role performance data
+    const { data: rolePerformanceData } = await this.supabase
+      .rpc('get_role_performance')
+
+    // Get engineer stats
+    const { data: engineerStats } = await this.supabase
+      .rpc('get_all_engineers_stats')
+   
     return {
       totalUsers: totalUsers || 0,
-      totalScores: scoreStats?.[0]?.total_scores || 0,
-      averageScore: scoreStats?.[0]?.average_score || 0,
-      topPerformer: topPerformer?.[0] ?? null,
-      monthlyScores: (monthlyScores || []).map(score => ({
-        score_date: score.score_date,
-        total_score: score.total_score,
-        target_score: score.target_score,
-        user: {
-          name: score.user.full_name,
-          email: score.user.email,
-          role: score.user.role.name
-        }
-      })),
-      rolePerformanceData: rolePerformanceData || []
+      totalScores: scoreStats?.total_scores || 0,
+      averageScore: scoreStats?.average_score || 0,
+      topPerformer: topPerformer?.[0] || null,
+      monthlyScores: transformedMonthlyScores,
+      rolePerformanceData: rolePerformanceData || [],
+      engineerStats: engineerStats || []
     }
   }
 }

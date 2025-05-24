@@ -4,10 +4,11 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Overview } from "@/components/overview"
 import { RecentScores } from "@/components/recent-scores"
 import { RolePerformance } from "@/components/role-performance"
+import { EngineerProgressCard } from "@/components/engineer-progress-card"
 import { DashboardService, DashboardStats } from "@/lib/services/dashboard"
 import { Loading } from "@/components/ui/loading"
 
@@ -66,7 +67,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Most improved</p>
-              <h2 className="text-3xl font-bold">{stats.topPerformer?.user.full_name || "No data"}</h2>
+              <h2 className="text-2xl font-bold">{stats.topPerformer?.user.full_name || "No data"}</h2>
               <p className="text-xs text-muted-foreground">
                 {stats.topPerformer?.user.role.name || "No role"}
               </p>
@@ -77,7 +78,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">Total Users</p>
-              <h2 className="text-3xl font-bold">{stats.totalUsers || 0}</h2>
+              <h2 className="text-2xl font-bold">{stats.totalUsers || 0}</h2>
               <p className="text-xs text-muted-foreground">Active users in the system</p>
             </div>
           </CardContent>
@@ -86,7 +87,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">Average Score</p>
-              <h2 className="text-3xl font-bold">{stats.averageScore ? `${stats.averageScore.toFixed(1)}%` : "0%"}</h2>
+              <h2 className="text-2xl font-bold">{stats.averageScore ? `${stats.averageScore.toFixed(1)}%` : "0%"}</h2>
               <p className="text-xs text-muted-foreground">Based on recent evaluations</p>
             </div>
           </CardContent>
@@ -95,7 +96,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Top performer this month</p>
-              <h2 className="text-3xl font-bold">{stats.topPerformer?.user.full_name || "No data"}</h2>
+              <h2 className="text-2xl font-bold">{stats.topPerformer?.user.full_name || "No data"}</h2>
               <p className="text-xs text-muted-foreground">
                 {stats.topPerformer?.user.role.name || "No role"} -{" "}
                 {stats.topPerformer?.total_score ? `${stats.topPerformer.total_score.toFixed(1)}%` : "0%"}
@@ -105,7 +106,34 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <Card>
+      {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Overview</CardTitle>
+          </CardHeader>
+          <CardContent className="pl-2">
+            <Overview data={overviewData} />
+          </CardContent>
+        </Card>
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>Role Performance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RolePerformance data={stats.rolePerformanceData} />
+          </CardContent>
+        </Card>
+      </div> */}
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold tracking-tight">Engineer Performance</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.engineerStats.map((engineer) => (
+            <EngineerProgressCard key={engineer.id} engineer={engineer} />
+          ))}
+        </div>
+      </div>
+
+      {/* <Card>
         <CardContent className="p-6">
           <div className="space-y-2 mb-4">
             <h3 className="font-semibold">Recent Scores</h3>
@@ -113,7 +141,7 @@ export default function DashboardPage() {
           </div>
           <RecentScores scores={stats.monthlyScores.slice(-5)} />
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   )
 }

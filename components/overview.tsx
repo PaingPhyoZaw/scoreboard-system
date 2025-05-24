@@ -3,8 +3,16 @@
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
-export function Overview() {
-  const data = [
+interface OverviewProps {
+  data: {
+    name: string
+    actual: number
+    target: number
+  }[]
+}
+
+export function Overview({ data }: OverviewProps) {
+  const defaultData = [
     {
       name: "Week 1",
       actual: 65,

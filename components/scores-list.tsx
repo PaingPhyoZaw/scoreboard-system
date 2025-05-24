@@ -218,8 +218,8 @@ export function ScoresList({ users, roles }: ScoresListProps) {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar className="bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-200/50">
-                          <AvatarFallback className="bg-transparent text-purple-700 font-medium">
-                            {getAvatarText(score.user?.full_name)}
+                          <AvatarFallback className="bg-transparent text-purple-700">
+                            {getAvatarText(score.user?.full_name?.split(' ').map(word => word.charAt(0).toUpperCase()).join(''))}
                           </AvatarFallback>
                         </Avatar>
                         <div>

@@ -44,10 +44,10 @@ export class ScoreService {
           field_score
         )
       `)
-      .order('score_date', { ascending: false })
+      .order('created_at', { ascending: false })
 
     if (filters?.startDate && filters?.endDate) {
-      query = query.gte('score_date', filters.startDate).lte('score_date', filters.endDate)
+      query = query.gte('created_at', filters.startDate).lte('created_at', filters.endDate)
     }
 
     const { data, error } = await query
