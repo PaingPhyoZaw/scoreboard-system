@@ -28,13 +28,8 @@ interface EngineerStats {
   id: string
   name: string
   role: string
-  monthToDateScore: number
-  targetScore: number
-  scoreBreakdown: {
-    category: string
-    score: number
-    maxScore: number
-  }[]
+  totalScore: number
+  maxPossibleScore: number
 }
 
 export interface DashboardStats {
@@ -147,7 +142,7 @@ export class DashboardService {
     // Get engineer stats
     const { data: engineerStats } = await this.supabase
       .rpc('get_all_engineers_stats')
-
+   
     return {
       totalUsers: totalUsers || 0,
       totalScores: scoreStats?.total_scores || 0,
