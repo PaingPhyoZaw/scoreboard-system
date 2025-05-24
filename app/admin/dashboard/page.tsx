@@ -47,12 +47,8 @@ export default function DashboardPage() {
     target: score.target_score,
   }))
 
-  // Calculate target completion
-  const targetCompletion = stats.topPerformer
-    ? Math.round((stats.averageScore / stats.topPerformer.target_score) * 100)
-    : 0
-
-  const remainingToTarget = 100 - targetCompletion
+  // Calculate completion percentage
+  const completionPercentage = stats.overallCompletion || 0
 
   return (
     <div className="space-y-6">
@@ -66,10 +62,10 @@ export default function DashboardPage() {
         <Card>
           <CardContent className="p-6">
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Most improved</p>
-              <h2 className="text-2xl font-bold">{stats.topPerformer?.user.full_name || "No data"}</h2>
+              <p className="text-sm text-muted-foreground">Overall Performance</p>
+              <h2 className="text-2xl font-bold">{stats.overallCompletion ? `${stats.overallCompletion}%` : "0%"}</h2>
               <p className="text-xs text-muted-foreground">
-                {stats.topPerformer?.user.role.name || "No role"}
+                Team completion rate
               </p>
             </div>
           </CardContent>
@@ -86,20 +82,21 @@ export default function DashboardPage() {
         <Card>
           <CardContent className="p-6">
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">Average Score</p>
-              <h2 className="text-2xl font-bold">{stats.averageScore ? `${stats.averageScore.toFixed(1)}%` : "0%"}</h2>
-              <p className="text-xs text-muted-foreground">Based on recent evaluations</p>
+              <p className="text-sm font-medium text-muted-foreground">Team Average</p>
+              <h2 className="text-2xl font-bold">{stats.teamAverageScore ? `${stats.teamAverageScore.toFixed(1)}` : "0"}</h2>
+              <p className="text-xs text-muted-foreground">Points per evaluation</p>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Top performer this month</p>
+              <p className="text-sm text-muted-foreground">Top Performer</p>
               <h2 className="text-2xl font-bold">{stats.topPerformer?.user.full_name || "No data"}</h2>
               <p className="text-xs text-muted-foreground">
-                {stats.topPerformer?.user.role.name || "No role"} -{" "}
-                {stats.topPerformer?.total_score ? `${stats.topPerformer.total_score.toFixed(1)}%` : "0%"}
+                {stats.topPerformer?.user.role.name || "No role"} •{" "}
+                {stats.topPerformer?.score ? `${stats.topPerformer.score.toFixed(0)} pts` : "0 pts"} •{" "}
+                {stats.topPerformer?.completion ? `${stats.topPerformer.completion}%` : "0%"}
               </p>
             </div>
           </CardContent>

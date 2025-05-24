@@ -34,8 +34,8 @@ interface EngineerStats {
 
 export interface DashboardStats {
   totalUsers: number
-  averageScore: number
-  totalScores: number
+  overallCompletion: number
+  teamAverageScore: number
   topPerformer: {
     user: {
       full_name: string
@@ -43,8 +43,8 @@ export interface DashboardStats {
         name: string
       }
     }
-    total_score: number
-    target_score: number
+    score: number
+    completion: number
   } | null
   monthlyScores: {
     score_date: string
@@ -83,25 +83,19 @@ export class DashboardService {
       .from("users")
       .select("*", { count: "exact", head: true })
 
-    // Get scores statistics
-    const { data: scoreStats } = await this.supabase
-      .rpc('get_score_statistics')
-
-    // Get top performer
-    const { data: topPerformer } = await this.supabase
-      .from("scores")
+    // Get dashboard statistics including top performer
+    const { data: dashboardStats } = await this.supabase
+      .rpc('get_dashboard_stats')
+   
+    // Get top performer details
+    const { data: topPerformerDetails } = await this.supabase
+      .from("users")
       .select(`
-        total_score,
-        target_score,
-        user:users!scores_user_id_fkey (
-          full_name,
-          role:roles!users_role_id_fkey (
-            name
-          )
-        )
+        full_name,
+        role:roles!users_role_id_fkey (name)
       `)
-      .order("total_score", { ascending: false })
-      .limit(1) as { data: TopPerformer[] | null }
+      .eq('id', dashboardStats?.[0]?.top_performer_id)
+      .single() as { data: { full_name: string; role: { name: string } } | null }
 
     // Get monthly scores
     const { data: monthlyScores } = await this.supabase
@@ -145,9 +139,16 @@ export class DashboardService {
    
     return {
       totalUsers: totalUsers || 0,
-      totalScores: scoreStats?.total_scores || 0,
-      averageScore: scoreStats?.average_score || 0,
-      topPerformer: topPerformer?.[0] || null,
+      overallCompletion: dashboardStats?.[0]?.overall_completion || 0,
+      teamAverageScore: dashboardStats?.[0]?.team_average_score || 0,
+      topPerformer: topPerformerDetails ? {
+        user: {
+          full_name: topPerformerDetails.full_name,
+          role: topPerformerDetails.role
+        },
+        score: dashboardStats?.[0]?.top_performer_score || 0,
+        completion: dashboardStats?.[0]?.top_performer_percentage || 0
+      } : null,
       monthlyScores: transformedMonthlyScores,
       rolePerformanceData: rolePerformanceData || [],
       engineerStats: engineerStats || []
